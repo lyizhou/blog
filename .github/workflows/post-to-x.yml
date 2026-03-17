@@ -1,0 +1,48 @@
+name: Post new blog articles to X
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/blog/**.md'
+
+jobs:
+  post-to-x:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Find newly added blog posts
+        id: new-posts
+        run: |
+          NEW_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD -- 'src/content/blog/*.md' | tr '\n' ' ')
+          echo "files=$NEW_FILES" >> $GITHUB_OUTPUT
+          if [ -n "$NEW_FILES" ]; then
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "New posts: $NEW_FILES"
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo "No new posts."
+          fi
+
+      - name: Set up Python
+        if: steps.new-posts.outputs.found == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.new-posts.outputs.found == 'true'
+        run: pip install tweepy python-frontmatter
+
+      - name: Post to X
+        if: steps.new-posts.outputs.found == 'true'
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          python3 .github/scripts/post_to_x.py ${{ steps.new-posts.outputs.files }}

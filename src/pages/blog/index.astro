@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog'))
+	.filter(post => !post.data.draft)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Blog" description="技术文章与思考">
+	<div class="stack gap-20">
+		<main class="wrapper stack gap-8">
+			<header>
+				<h1 class="section-title">Blog</h1>
+				<p class="section-subtitle">技术文章、量化研究与思考</p>
+			</header>
+			<section>
+				<ul class="blog-list">
+					{posts.map(post => (
+						<li>
+							<a href={`/blog/${post.id}/`} class="blog-item">
+								<div class="blog-meta">
+									<time datetime={post.data.date.toISOString()}>
+										{post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+									</time>
+									<div class="tags">
+										{post.data.tags.map(tag => (
+											<span class="tag">{tag}</span>
+										))}
+									</div>
+								</div>
+								<h2 class="blog-title">{post.data.title}</h2>
+								{post.data.description && (
+									<p class="blog-desc">{post.data.description}</p>
+								)}
+							</a>
+						</li>
+					))}
+				</ul>
+				{posts.length === 0 && (
+					<p class="empty">暂无文章，在 Obsidian 的 blog/posts/ 中创建并将 draft 设为 false 即可发布。</p>
+				)}
+			</section>
+		</main>
+	</div>
+</BaseLayout>
+
+<style>
+	.section-title { font-size: var(--text-xl); color: var(--gray-0); }
+	.section-subtitle { color: var(--gray-400); margin-top: 0.5rem; }
+	.blog-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+	.blog-item {
+		display: block;
+		padding: 1.5rem;
+		background: var(--gradient-subtle);
+		border: 1px solid var(--gray-800);
+		border-radius: 0.75rem;
+		text-decoration: none;
+		transition: border-color 0.2s;
+	}
+	.blog-item:hover { border-color: var(--accent-regular); }
+	.blog-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+	time { color: var(--gray-400); font-size: var(--text-sm); }
+	.tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+	.tag {
+		font-size: 0.75rem;
+		padding: 0.15rem 0.6rem;
+		background: var(--accent-subtle-overlay);
+		color: var(--accent-text-over);
+		border-radius: 999px;
+	}
+	.blog-title { font-size: var(--text-lg); color: var(--gray-0); margin: 0.25rem 0; }
+	.blog-desc { color: var(--gray-400); font-size: var(--text-sm); margin: 0; }
+	.empty { color: var(--gray-400); text-align: center; padding: 3rem 0; }
+</style>

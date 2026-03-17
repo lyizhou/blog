@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts
+		.filter(post => !post.data.draft)
+		.map(post => ({
+			params: { slug: post.id },
+			props: { post },
+		}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+	<div class="stack gap-20">
+		<div class="wrapper stack gap-15">
+			<header>
+				<div class="back"><a href="/blog">← 返回博客</a></div>
+				<div class="meta">
+					<time datetime={post.data.date.toISOString()}>
+						{post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+					</time>
+					<div class="tags">
+						{post.data.tags.map(tag => (
+							<span class="tag">{tag}</span>
+						))}
+					</div>
+				</div>
+				<h1>{post.data.title}</h1>
+				{post.data.description && <p class="desc">{post.data.description}</p>}
+			</header>
+			<article class="content">
+				<Content />
+			</article>
+		</div>
+	</div>
+</BaseLayout>
+
+<style>
+	.back a { color: var(--gray-400); text-decoration: none; font-size: var(--text-sm); }
+	.back a:hover { color: var(--accent-regular); }
+	.meta { display: flex; align-items: center; gap: 1rem; margin: 1rem 0 0.5rem; }
+	time { color: var(--gray-400); font-size: var(--text-sm); }
+	.tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+	.tag {
+		font-size: 0.75rem;
+		padding: 0.15rem 0.6rem;
+		background: var(--accent-subtle-overlay);
+		color: var(--accent-text-over);
+		border-radius: 999px;
+	}
+	h1 { font-size: var(--text-2xl); color: var(--gray-0); }
+	.desc { color: var(--gray-400); font-size: var(--text-lg); }
+	.content { max-width: 65ch; }
+	.content :global(h2) { font-size: var(--text-xl); color: var(--gray-0); margin-top: 2rem; }
+	.content :global(h3) { font-size: var(--text-lg); color: var(--gray-1); margin-top: 1.5rem; }
+	.content :global(p) { color: var(--gray-300); line-height: 1.8; }
+	.content :global(code) { background: var(--gray-900); padding: 0.1em 0.4em; border-radius: 0.25rem; font-size: 0.9em; }
+	.content :global(pre) { background: var(--gray-900); padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; }
+	.content :global(pre code) { background: none; padding: 0; }
+	.content :global(a) { color: var(--accent-regular); }
+	.content :global(blockquote) { border-left: 3px solid var(--accent-regular); padding-left: 1rem; color: var(--gray-400); }
+</style>

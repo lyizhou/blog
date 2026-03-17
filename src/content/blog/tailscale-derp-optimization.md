@@ -30,7 +30,7 @@ Tailscale 优先建立 P2P 直连（WireGuard），但 P2P 并非总能成功：
 
 ## 第一个大坑：ISP SNI 过滤
 
-按照常规操作，在服务器上部署 `derper`，申请 Let's Encrypt 证书，配置域名 `opentrading.tech`，然后在 Tailscale ACL 的 `derpMap` 里填上这个地址。
+按照常规操作，在服务器上部署 `derper`，申请 Let's Encrypt 证书，配置域名 `example.com`，然后在 Tailscale ACL 的 `derpMap` 里填上这个地址。
 
 结果：**完全无法连接**。
 
@@ -38,7 +38,7 @@ Tailscale 优先建立 P2P 直连（WireGuard），但 P2P 并非总能成功：
 
 ```bash
 # HTTP 正常，返回 400（连接到达服务器）
-curl http://opentrading.tech:443/
+curl http://example.com:443/
 # → HTTP 400
 
 # TLS 无 SNI，返回错误（但 TLS 握手到达服务器）
@@ -46,11 +46,11 @@ curl -k https://YOUR_SERVER_IP:443/
 # → tlsv1 alert internal error
 
 # TLS 带域名 SNI，0 字节响应
-curl https://opentrading.tech:443/
+curl https://example.com:443/
 # → SSL_ERROR_SYSCALL（连接被直接丢弃）
 ```
 
-规律很清晰：**只要 TLS Client Hello 里包含 `opentrading.tech` 这个 SNI 字段，运营商就丢包**。中国电信/移动对国内 IP 做深度包检测（DPI），未备案域名的 TLS 会被 SNI 识别并过滤。
+规律很清晰：**只要 TLS Client Hello 里包含 `example.com` 这个 SNI 字段，运营商就丢包**。中国电信/移动对国内 IP 做深度包检测（DPI），未备案域名的 TLS 会被 SNI 识别并过滤。
 
 这意味着：不管什么端口（443、8443 都没用），只要 TLS 握手里有未备案域名，就会被封。
 
@@ -155,7 +155,7 @@ derper 启动后，日志里会打印自签证书的 SHA-256 哈希，用这个�
 
 在调试过程中，一个诡异现象让我浪费了不少时间：**所有 `nc` 端口探测都显示 "succeeded"**，包括根本没开放的端口。
 
-原因：Mac 上开了 Clash Verge 的 TUN 模式，它在内核层拦截所有网络流量（通过 `utun1024` 接口，IP 段 `198.18.0.0/15`）。`nc` 连的不是真实服务器，而是 Clash 的虚拟接口。
+原因：Mac 上开了 Clash Verge 的 TUN 模式，它在内核层拦截所有网络流量（通过虚拟网卡接口，占用一段保留 IP 段）。`nc` 连的不是真实服务器，而是 Clash 的虚拟接口。
 
 诊断方法：
 

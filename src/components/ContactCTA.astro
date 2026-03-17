@@ -5,10 +5,16 @@ import Icon from './Icon.astro';
 
 <aside>
 	<h2>有什么想聊的？</h2>
-	<CallToAction href="https://x.com/yiouliu148574">
-		在 X 上找我
-		<Icon icon="paper-plane-tilt" size="1.2em" />
-	</CallToAction>
+	<div class="actions">
+		<CallToAction href="mailto:yiouliu2333@gmail.com">
+			发邮件给我
+			<Icon icon="paper-plane-tilt" size="1.2em" />
+		</CallToAction>
+		<p class="email">
+			Gmail:
+			<a href="mailto:yiouliu2333@gmail.com">yiouliu2333@gmail.com</a>
+		</p>
+	</div>
 </aside>
 
 <style>
@@ -24,10 +30,34 @@ import Icon from './Icon.astro';
 		box-shadow: var(--shadow-sm);
 	}
 
+	.actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
 	h2 {
 		font-size: var(--text-xl);
 		text-align: center;
 		max-width: 15ch;
+	}
+
+	.email {
+		margin: 0;
+		color: var(--gray-300);
+		font-size: var(--text-sm);
+		text-align: center;
+	}
+
+	.email a {
+		color: var(--accent-regular);
+		text-decoration: none;
+	}
+
+	.email a:hover,
+	.email a:focus {
+		text-decoration: underline;
 	}
 
 	@media (min-width: 50em) {
@@ -40,6 +70,14 @@ import Icon from './Icon.astro';
 
 		h2 {
 			font-size: var(--text-3xl);
+			text-align: left;
+		}
+
+		.actions {
+			align-items: flex-start;
+		}
+
+		.email {
 			text-align: left;
 		}
 	}

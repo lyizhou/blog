@@ -2,8 +2,6 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const VAULT_BLOG = '/Users/yiou/Library/Mobile Documents/iCloud~md~obsidian/Documents/Quant_OS/blog/posts';
-
 export const collections = {
 	// 作品集
 	work: defineCollection({
@@ -17,9 +15,9 @@ export const collections = {
 			img_alt: z.string().optional(),
 		}),
 	}),
-	// 博客文章（来自 Obsidian vault）
+	// 博客文章（从 Obsidian vault 同步到此目录，用 scripts/publish.sh 发布）
 	blog: defineCollection({
-		loader: glob({ base: VAULT_BLOG, pattern: '**/*.md' }),
+		loader: glob({ base: './src/content/blog', pattern: '**/*.md' }),
 		schema: z.object({
 			title: z.string(),
 			date: z.coerce.date(),

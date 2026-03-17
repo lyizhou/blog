@@ -27,23 +27,16 @@ const projects = (await getCollection('work'))
 		<div class="wrapper stack gap-8 lg:gap-20">
 			<header class="hero">
 				<Hero
-					title="Hello, my name is Jeanine White"
-					tagline="I am a Creative Developer who is currently based in Portland, Oregon."
+					title="Hi, I'm lyizhou"
+					tagline="量化研究者 & 系统开发者，专注于系统化交易策略与技术基础设施。"
 					align="start"
 				>
 					<div class="roles">
-						<Pill><Icon icon="code" size="1.33em" /> Developer</Pill>
-						<Pill><Icon icon="microphone-stage" size="1.33em" /> Speaker</Pill>
-						<Pill><Icon icon="pencil-line" size="1.33em" /> Writer</Pill>
+						<Pill><Icon icon="strategy" size="1.33em" /> 量化研究</Pill>
+						<Pill><Icon icon="terminal-window" size="1.33em" /> 系统开发</Pill>
+						<Pill><Icon icon="pencil-line" size="1.33em" /> 技术写作</Pill>
 					</div>
 				</Hero>
-
-				<img
-					alt="Jeanine White smiling in a red plaid shirt and tortoise shell glasses"
-					width="480"
-					height="620"
-					src="/assets/portrait.jpg"
-				/>
 			</header>
 
 			<Skills />
@@ -52,8 +45,8 @@ const projects = (await getCollection('work'))
 		<main class="wrapper stack gap-20 lg:gap-48">
 			<section class="section with-background with-cta">
 				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Selected Work</h3>
-					<p>Take a look below at some of my featured work for clients from the past few years.</p>
+					<h3>项目</h3>
+					<p>一些正在维护或已完成的工具与系统。</p>
 				</header>
 
 				<div class="gallery">
@@ -70,7 +63,7 @@ const projects = (await getCollection('work'))
 
 				<div class="cta">
 					<CallToAction href="/work/">
-						View All
+						查看全部
 						<Icon icon="arrow-right" size="1.2em" />
 					</CallToAction>
 				</div>
@@ -78,19 +71,18 @@ const projects = (await getCollection('work'))
 
 			<section class="section with-background bg-variant">
 				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Mentions</h3>
+					<h3>技术栈</h3>
 					<p>
-						I have been fortunate enough to receive praise for my work in several publications. Take
-						a look below to learn more.
+						日常用到的语言、工具与基础设施。
 					</p>
 				</header>
 
 				<div class="gallery">
 					<Grid variant="small">
 						{
-							['Medium', 'BuzzFeed', 'The Next Web', 'awwwards.', 'TechCrunch'].map((brand) => (
+							['Python', 'Linux', 'Tailscale', 'WireGuard', 'Astro', 'Obsidian'].map((item) => (
 								<li class="mention-card">
-									<p>{brand}</p>
+									<p>{item}</p>
 								</li>
 							))
 						}

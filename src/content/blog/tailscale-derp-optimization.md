@@ -42,7 +42,7 @@ curl http://opentrading.tech:443/
 # → HTTP 400
 
 # TLS 无 SNI，返回错误（但 TLS 握手到达服务器）
-curl -k https://8.138.151.75:443/
+curl -k https://YOUR_SERVER_IP:443/
 # → tlsv1 alert internal error
 
 # TLS 带域名 SNI，0 字节响应
@@ -67,18 +67,18 @@ openssl req -x509 \
   -newkey ec \
   -pkeyopt ec_paramgen_curve:prime256v1 \
   -nodes \
-  -keyout /etc/derper/certs/8.138.151.75.key \
-  -out /etc/derper/certs/8.138.151.75.crt \
+  -keyout /etc/derper/certs/YOUR_SERVER_IP.key \
+  -out /etc/derper/certs/YOUR_SERVER_IP.crt \
   -days 3650 \
-  -subj "/CN=8.138.151.75" \
-  -addext "subjectAltName=IP:8.138.151.75"
+  -subj "/CN=YOUR_SERVER_IP" \
+  -addext "subjectAltName=IP:YOUR_SERVER_IP"
 ```
 
 然后以 IP 作为 hostname 启动 derper，使用 manual 证书模式：
 
 ```bash
 derper \
-  -hostname 8.138.151.75 \
+  -hostname YOUR_SERVER_IP \
   -a :8443 \
   -http-port -1 \
   -stun-port 3478 \
@@ -99,7 +99,7 @@ After=network.target
 
 [Service]
 ExecStart=/root/go/bin/derper \
-  -hostname 8.138.151.75 \
+  -hostname YOUR_SERVER_IP \
   -a :8443 \
   -http-port -1 \
   -stun-port 3478 \
@@ -135,8 +135,8 @@ derper 启动后，日志里会打印自签证书的 SHA-256 哈希，用这个�
       "Nodes": [{
         "Name": "sz1",
         "RegionID": 900,
-        "HostName": "8.138.151.75",
-        "CertName": "sha256-raw:3c55a902a67549f29e5b9a4b1705ecf9d5d57accc03ea78d462afac2c5ac47c2",
+        "HostName": "YOUR_SERVER_IP",
+        "CertName": "sha256-raw:<derper 启动日志中打印的哈希>",
         "DERPPort": 8443,
         "STUNPort": 3478
       }]
@@ -161,7 +161,7 @@ derper 启动后，日志里会打印自签证书的 SHA-256 哈希，用这个�
 
 ```bash
 # 看路由走向
-route get 8.138.151.75
+route get YOUR_SERVER_IP
 # 如果 interface: utun1024，说明被 Clash TUN 拦截了
 ```
 
@@ -169,7 +169,7 @@ route get 8.138.151.75
 
 ```yaml
 rules:
-  - IP-CIDR,8.138.151.75/32,🎯 Direct,no-resolve   # 阿里云 DERP
+  - IP-CIDR,YOUR_SERVER_IP/32,🎯 Direct,no-resolve  # 阿里云 DERP
   - PROCESS-NAME,tailscaled,🎯 Direct               # tailscaled 进程
 ```
 

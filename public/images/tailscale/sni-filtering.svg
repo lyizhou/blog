@@ -103,5 +103,5 @@
 
   <!-- Key command -->
   <rect x="60" y="352" width="580" height="20" fill="#161b27" rx="4"/>
-  <text x="350" y="366" text-anchor="middle" fill="#64748b" font-size="10">openssl req -x509 -newkey ec ... -subj "/CN=8.138.151.75" -addext "subjectAltName=IP:8.138.151.75"</text>
+  <text x="350" y="366" text-anchor="middle" fill="#64748b" font-size="10">openssl req -x509 -newkey ec ... -subj "/CN=YOUR_SERVER_IP" -addext "subjectAltName=IP:YOUR_SERVER_IP"</text>
 </svg>
